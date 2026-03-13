@@ -6,6 +6,9 @@ import (
 	"time"
 
 	"github.com/DenisHoliahaR/go-to-do/internal/infrastructure/postgres"
+	"github.com/DenisHoliahaR/go-to-do/internal/project/handler"
+	"github.com/DenisHoliahaR/go-to-do/internal/project/repository"
+	"github.com/DenisHoliahaR/go-to-do/internal/project/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -30,6 +33,17 @@ func (app *application) mount() http.Handler {
 		app.logger.Error("Failed to connect to database")
 		return nil
 	}
+
+	projectRepository := repository.NewProjectRepository(db)
+	projectService := service.NewProjectService(projectRepository)
+	projectHandler := handler.NewProjectHandler(projectService, app.logger)
+	r.Route("/projects", func (r chi.Router) {
+		r.Post("/", projectHandler.CreateProject)
+		r.Get("/", projectHandler.GetProjectList)
+		r.Get("/{id}", projectHandler.GetProjectById)
+		r.Put("/{id}", projectHandler.UpdateProject)
+		r.Delete("/{id}", projectHandler.DeleteProject)
+	})
 
 	return r
 }

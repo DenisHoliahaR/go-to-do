@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	_ "github.com/go-pg/pg/v10"
+	_ "github.com/lib/pq"
 )
 
 func NewPostgresDB(dsn string) *sql.DB {
