@@ -1,8 +1,8 @@
 package handler
 
-import domain "github.com/DenisHoliahaR/go-to-do/internal/project/service"
+import "github.com/DenisHoliahaR/go-to-do/internal/project/service"
 
-func ProjectToProjectResponse(project *domain.Project) ProjectResponse {
+func ProjectToProjectResponse(project *service.Project) ProjectResponse {
 	return ProjectResponse{
 		ID:          project.ID,
 		Name:        project.Name,
@@ -13,7 +13,7 @@ func ProjectToProjectResponse(project *domain.Project) ProjectResponse {
 	}
 }
 
-func ProjectListToProjectListResponse(projects []*domain.Project) GetProjectListResponse {
+func ProjectListToProjectListResponse(projects []*service.Project) GetProjectListResponse {
 	resp := GetProjectListResponse{
 		Projects: make([]ProjectResponse, len(projects)),
 	}
@@ -25,16 +25,16 @@ func ProjectListToProjectListResponse(projects []*domain.Project) GetProjectList
 	return resp;
 }
 
-func CreateProjectRequestToProject(data CreateProjectRequest) domain.Project {
-	return domain.Project{
+func CreateProjectRequestToProject(data CreateProjectRequest) service.Project {
+	return service.Project{
 		Name: data.Name,
 		Description: data.Description,
 		OwnerID: data.OwnerID,
 	}
 } 
 
-func UpdateProjectRequestToProject(data UpdateProjectRequest) domain.Project {
-	return domain.Project{
+func UpdateProjectRequestToProject(data UpdateProjectRequest) service.Project {
+	return service.Project{
 		Name: data.Name,
 		Description: data.Description,
 	}
