@@ -9,17 +9,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
-	projectH "github.com/DenisHoliahaR/go-to-do/internal/project/handler"
-	projectR "github.com/DenisHoliahaR/go-to-do/internal/project/repository"
-	projectS "github.com/DenisHoliahaR/go-to-do/internal/project/service"
-
-	taskH "github.com/DenisHoliahaR/go-to-do/internal/task/handler"
-	taskR "github.com/DenisHoliahaR/go-to-do/internal/task/repository"
-	taskS "github.com/DenisHoliahaR/go-to-do/internal/task/service"
-
-	userH "github.com/DenisHoliahaR/go-to-do/internal/user/handler"
-	userR "github.com/DenisHoliahaR/go-to-do/internal/user/repository"
-	userS "github.com/DenisHoliahaR/go-to-do/internal/user/service"
+	project "github.com/DenisHoliahaR/go-to-do/internal/project/handler"
+	task "github.com/DenisHoliahaR/go-to-do/internal/task/handler"
+	user "github.com/DenisHoliahaR/go-to-do/internal/user/handler"
 )
 
 func (app *application) mount() http.Handler {
@@ -43,38 +35,10 @@ func (app *application) mount() http.Handler {
 		return nil
 	}
 
-	projectRepository := projectR.NewProjectRepository(db)
-	projectService := projectS.NewProjectService(projectRepository)
-	projectHandler := projectH.NewProjectHandler(projectService, app.logger)
-	r.Route("/projects", func(r chi.Router) {
-		r.Post("/", projectHandler.CreateProject)
-		r.Get("/", projectHandler.GetProjectList)
-		r.Get("/{id}", projectHandler.GetProjectById)
-		r.Put("/{id}", projectHandler.UpdateProject)
-		r.Delete("/{id}", projectHandler.DeleteProject)
-	})
-
-	taskRepository := taskR.NewTaskRepository(db)
-	taskService := taskS.NewTaskService(taskRepository)
-	taskHandler := taskH.NewTaskHandler(taskService, app.logger)
-	r.Route("/tasks", func(r chi.Router) {
-		r.Post("/", taskHandler.CreateTask)
-		r.Get("/", taskHandler.GetTaskList)
-		r.Get("/{id}", taskHandler.GetTaskById)
-		r.Put("/{id}", taskHandler.UpdateTask)
-		r.Delete("/{id}", taskHandler.DeleteTask)
-	})
-
-	userRepository := userR.NewUserRepository(db)
-	userService := userS.NewUserService(userRepository)
-	userHandler := userH.NewUserHandler(userService, app.logger)
-	r.Route("/users", func(r chi.Router) {
-		r.Post("/", userHandler.CreateUser)
-		r.Get("/", userHandler.GetUserList)
-		r.Get("/{id}", userHandler.GetUserById)
-		r.Put("/{id}", userHandler.UpdateUser)
-		r.Delete("/{id}", userHandler.DeleteUser)
-	})
+	// Registration of HTTP endpoints for API
+	project.RegisterHTTPEndpoints(r, db, app.logger)
+	task.RegisterHTTPEndpoints(r, db, app.logger)
+	user.RegisterHTTPEndpoints(r, db, app.logger)
 
 	return r
 }

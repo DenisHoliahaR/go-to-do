@@ -23,7 +23,7 @@ func NewProjectHandler(s *service.Service, l *slog.Logger) *handler {
 	}
 }
 
-func (h *handler) GetProjectById(w http.ResponseWriter, r *http.Request) {
+func (h *handler) GetProjectByID(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
