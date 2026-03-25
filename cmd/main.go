@@ -1,9 +1,11 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
 	"log/slog"
 	"os"
+
+	"github.com/go-chi/jwtauth/v5"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -16,6 +18,7 @@ func main() {
 		db: dbConfig{
 			dsn: os.Getenv("GOOSE_DBSTRING"),
 		},
+		authToken: jwtauth.New("HS256", []byte(os.Getenv("JWT_SECRET_KEY")), nil),
 	}
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))

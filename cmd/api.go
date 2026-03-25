@@ -8,7 +8,9 @@ import (
 	"github.com/DenisHoliahaR/go-to-do/internal/infrastructure/postgres"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/jwtauth/v5"
 
+	auth "github.com/DenisHoliahaR/go-to-do/internal/auth/handler"
 	project "github.com/DenisHoliahaR/go-to-do/internal/project/handler"
 	task "github.com/DenisHoliahaR/go-to-do/internal/task/handler"
 	user "github.com/DenisHoliahaR/go-to-do/internal/user/handler"
@@ -28,17 +30,18 @@ func (app *application) mount() http.Handler {
 	// processing should be stopped.
 	r.Use(middleware.Timeout(60 * time.Second))
 
+	// Init postgres database
 	db := postgres.NewPostgresDB(app.config.db.dsn)
-
 	if db == nil {
 		app.logger.Error("Failed to connect to database")
 		return nil
 	}
 
 	// Registration of HTTP endpoints for API
-	project.RegisterHTTPEndpoints(r, db, app.logger)
-	task.RegisterHTTPEndpoints(r, db, app.logger)
-	user.RegisterHTTPEndpoints(r, db, app.logger)
+	auth.RegisterHTTPEndpoints(r, db, app.logger)
+	project.RegisterHTTPEndpoints(r, db, app.logger, app.config.authToken)
+	task.RegisterHTTPEndpoints(r, db, app.logger, app.config.authToken)
+	user.RegisterHTTPEndpoints(r, db, app.logger, app.config.authToken)
 
 	return r
 }
@@ -65,6 +68,7 @@ type application struct {
 type config struct {
 	addr string
 	db   dbConfig
+	authToken *jwtauth.JWTAuth
 }
 
 type dbConfig struct {
